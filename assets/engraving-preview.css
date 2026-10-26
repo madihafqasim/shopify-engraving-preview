@@ -1,0 +1,164 @@
+/* Engraving preview */
+
+.engraving {
+  --engraving-ink: #3a2414;
+  --engraving-border: rgba(0, 0, 0, 0.15);
+  --engraving-accent: #7a4a2a;
+  display: grid;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.engraving__stage {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f4efe8;
+}
+
+.engraving__image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Default area; JavaScript replaces it with the product's own values. */
+.engraving__area {
+  position: absolute;
+  left: 22%;
+  top: 56%;
+  width: 56%;
+  height: 16%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.15;
+  color: var(--engraving-ink);
+  pointer-events: none;
+  /* Darken into the wood rather than sit on top of it. */
+  mix-blend-mode: multiply;
+  opacity: 0.88;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25),
+    0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.engraving__line {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.engraving__line[hidden] {
+  display: none;
+}
+
+.engraving__fields {
+  display: grid;
+  gap: 1rem;
+}
+
+.engraving__title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.engraving__field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  align-items: end;
+}
+
+.engraving__field label {
+  grid-column: 1 / -1;
+  font-size: 0.9em;
+}
+
+.engraving__field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--engraving-border);
+  border-radius: 6px;
+  font: inherit;
+}
+
+.engraving__field input:focus-visible,
+.engraving__font input:focus-visible + span {
+  outline: 2px solid var(--engraving-accent);
+  outline-offset: 2px;
+}
+
+.engraving__count,
+.engraving__optional,
+.engraving__note {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.engraving__count {
+  align-self: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.engraving__fonts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.engraving__fonts legend {
+  margin-bottom: 0.5rem;
+  font-size: 0.9em;
+}
+
+.engraving__font {
+  position: relative;
+  cursor: pointer;
+}
+
+.engraving__font input {
+  position: absolute;
+  opacity: 0;
+}
+
+.engraving__font span {
+  display: inline-block;
+  min-height: 44px;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--engraving-border);
+  border-radius: 6px;
+  font-size: 1.05em;
+}
+
+.engraving__font input:checked + span {
+  border-color: var(--engraving-accent);
+  box-shadow: inset 0 0 0 1px var(--engraving-accent);
+}
+
+.engraving__note {
+  margin: 0;
+}
+
+.engraving__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Photo and fields side by side. Only for wide placements, such as a full-width section. */
+@media (min-width: 750px) {
+  .engraving--wide {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

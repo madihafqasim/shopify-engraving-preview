@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engraving Preview Demo</title>
+  <meta name="description" content="Live engraving preview for a Shopify product page: type a name and see it on the trophy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat&family=Great+Vibes&display=swap">
+  <link rel="stylesheet" href="../assets/engraving-preview.css">
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      background: #fbf8f4;
+      color: #1f1a16;
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { max-width: 980px; margin: 0 auto; padding: 32px 16px 56px; }
+    h1 { margin: 0 0 4px; font-size: clamp(1.5rem, 4vw, 2rem); }
+    .lead { margin: 0 0 8px; opacity: 0.75; }
+    .price { margin: 0; font-weight: 600; }
+    button {
+      min-height: 48px;
+      padding: 0 24px;
+      border: 0;
+      border-radius: 6px;
+      background: #1f1a16;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cart { margin-top: 16px; padding: 16px; border: 1px dashed rgba(0, 0, 0, 0.25); border-radius: 8px; }
+    .cart h2 { margin: 0 0 8px; font-size: 1rem; }
+    .cart pre { margin: 0; white-space: pre-wrap; font-size: 0.9rem; }
+    footer { margin-top: 40px; font-size: 0.85rem; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Reclaimed Timber Trophy</h1>
+    <p class="lead">Demo of the engraving preview. Type below and watch the trophy update.</p>
+    <p class="price">$89.00 AUD</p>
+
+    <!-- Same markup the Liquid snippet renders on a Shopify product page. -->
+    <form id="product-form-demo" action="#" novalidate></form>
+
+    <div class="engraving engraving--wide" data-engraving-preview data-area="22,56,56,16">
+      <div class="engraving__stage">
+        <img class="engraving__image" src="trophy.svg" width="800" height="1000" alt="Timber trophy with a sanded panel for engraving">
+        <div class="engraving__area" aria-hidden="true">
+          <span class="engraving__line" data-engraving-line="1"></span>
+          <span class="engraving__line" data-engraving-line="2"></span>
+        </div>
+      </div>
+
+      <div class="engraving__fields">
+        <p class="engraving__title">Personalise your engraving</p>
+
+        <div class="engraving__field">
+          <label for="EngravingLine1-demo">Line 1</label>
+          <input id="EngravingLine1-demo" type="text" name="properties[Line 1]" form="product-form-demo" maxlength="26" placeholder="e.g. Player of the Year" autocomplete="off" value="Player of the Year" data-engraving-input="1">
+          <span class="engraving__count" data-engraving-count="1">0/26</span>
+        </div>
+
+        <div class="engraving__field">
+          <label for="EngravingLine2-demo">Line 2 <span class="engraving__optional">(optional)</span></label>
+          <input id="EngravingLine2-demo" type="text" name="properties[Line 2]" form="product-form-demo" maxlength="26" placeholder="e.g. Brisbane Rovers 2026" autocomplete="off" value="Brisbane Rovers 2026" data-engraving-input="2">
+          <span class="engraving__count" data-engraving-count="2">0/26</span>
+        </div>
+
+        <fieldset class="engraving__fonts">
+          <legend>Font</legend>
+          <label class="engraving__font" style="font-family: 'Playfair Display', serif;">
+            <input type="radio" name="properties[Font]" form="product-form-demo" value="Playfair Display" checked data-engraving-font>
+            <span>Playfair Display</span>
+          </label>
+          <label class="engraving__font" style="font-family: 'Montserrat', serif;">
+            <input type="radio" name="properties[Font]" form="product-form-demo" value="Montserrat" data-engraving-font>
+            <span>Montserrat</span>
+          </label>
+          <label class="engraving__font" style="font-family: 'Great Vibes', serif;">
+            <input type="radio" name="properties[Font]" form="product-form-demo" value="Great Vibes" data-engraving-font>
+            <span>Great Vibes</span>
+          </label>
+        </fieldset>
+
+        <p class="engraving__note">The preview is a guide. We send an artwork proof before production.</p>
+
+        <button type="submit" form="product-form-demo">Add to cart</button>
+
+        <div class="cart">
+          <h2>What Shopify would save on the order</h2>
+          <pre data-demo-cart>Press "Add to cart" to see the line item properties.</pre>
+        </div>
+      </div>
+
+      <p class="engraving__status" aria-live="polite" data-engraving-status></p>
+    </div>
+
+    <footer>Built by Madiha F. Trophy illustration made for this demo.</footer>
+  </main>
+
+  <script src="../assets/engraving-preview.js"></script>
+  <script>
+    // Demo only: show the line item properties instead of adding to a real cart.
+    document.getElementById('product-form-demo').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(event.target);
+      const lines = [...data.entries()]
+        .filter(([key, value]) => value.trim())
+        .map(([key, value]) => `${key.replace(/^properties\[(.*)\]$/, '$1')}: ${value}`);
+      document.querySelector('[data-demo-cart]').textContent = lines.join('\n') || 'No engraving entered.';
+    });
+  </script>
+</body>
+</html>
