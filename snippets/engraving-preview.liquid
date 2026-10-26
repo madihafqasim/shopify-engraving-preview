@@ -1,6 +1,6 @@
 {%- doc -%}
-  Engraving preview. Shows the customer's text on the product photo as they
-  type, and saves it to the order as line item properties.
+  Engraving preview. Shows the customer's text and logo on the product photo
+  as they type, and saves them to the order as line item properties.
 
   @param {product} product - The product being engraved
   @param {object} section - The product section, used for unique IDs
@@ -14,14 +14,18 @@
 
   Works with Dawn, Horizon and other Online Store 2.0 themes.
 
+  Saved on the order: Line 1, Line 1 size, Line 2, Line 2 size, Font,
+  Logo (the uploaded file) and Logo position.
+
   Optional product metafields (namespace "engraving"):
-    engraving.area       Single line text  Where the text sits on the photo, as
-                                           "left,top,width,height" in % of the
+    engraving.area       Single line text  Where the engraving sits on the photo,
+                                           as "left,top,width,height" in % of the
                                            image. Default "34.1,50.2,32.1,21.1".
     engraving.max_chars  Integer           Characters per line. Default 26.
     engraving.fonts      Single line text  Comma-separated Google Fonts.
                                            Default "Playfair Display,Montserrat,Great Vibes".
     engraving.required   True or false     Make line 1 required. Default false.
+    engraving.logo       True or false     Offer a logo upload. Default true.
 {%- endcomment -%}
 
 {%- liquid
@@ -30,10 +34,16 @@
   assign font_list = product.metafields.engraving.fonts.value | default: 'Playfair Display,Montserrat,Great Vibes'
   assign fonts = font_list | split: ','
   assign required = product.metafields.engraving.required.value | default: false
+  assign show_logo = true
+  if product.metafields.engraving.logo.value == false
+    assign show_logo = false
+  endif
   assign image = product.selected_or_first_available_variant.featured_media.preview_image | default: product.featured_image
   assign dawn_form_id = 'product-form-' | append: section.id
   assign form_id = form_id | default: dawn_form_id
   assign uid = section.id | append: '-' | append: product.id
+  assign sizes = 'Small,Medium,Large' | split: ','
+  assign logo_positions = 'Top,Bottom' | split: ','
 
   assign font_query = ''
   for font in fonts
@@ -61,6 +71,7 @@
           alt: image.alt
       }}
       <div class="engraving__area" aria-hidden="true">
+        <img class="engraving__logo-preview" alt="" width="200" height="200" hidden data-engraving-logo-preview>
         <span class="engraving__line" data-engraving-line="1"></span>
         <span class="engraving__line" data-engraving-line="2"></span>
       </div>
@@ -70,42 +81,44 @@
   <div class="engraving__fields">
     <p class="engraving__title">Personalise your engraving</p>
 
-    <div class="engraving__field">
-      <label for="EngravingLine1-{{ uid }}">Line 1</label>
-      <input
-        id="EngravingLine1-{{ uid }}"
-        type="text"
-        name="properties[Line 1]"
-        form="{{ form_id }}"
-        maxlength="{{ max_chars }}"
-        placeholder="e.g. Player of the Year"
-        autocomplete="off"
-        {% if required %}required{% endif %}
-        data-engraving-input="1"
-      >
-      <span class="engraving__count" data-engraving-count="1">0/{{ max_chars }}</span>
-    </div>
+    {%- for n in (1..2) -%}
+      <div class="engraving__field">
+        <div class="engraving__label-row">
+          <label for="EngravingLine{{ n }}-{{ uid }}">
+            Line {{ n }}
+            {%- if n == 2 %} <span class="engraving__optional">(optional)</span>{% endif -%}
+          </label>
+          <span class="engraving__count" data-engraving-count="{{ n }}">0/{{ max_chars }}</span>
+        </div>
+        <div class="engraving__input-row">
+          <input
+            id="EngravingLine{{ n }}-{{ uid }}"
+            type="text"
+            name="properties[Line {{ n }}]"
+            form="{{ form_id }}"
+            maxlength="{{ max_chars }}"
+            placeholder="{% if n == 1 %}e.g. Player of the Year{% else %}e.g. Brisbane Rovers 2026{% endif %}"
+            autocomplete="off"
+            {% if n == 1 and required %}required{% endif %}
+            data-engraving-input="{{ n }}"
+          >
+          <label class="engraving__size">
+            <span class="engraving__sr-only">Line {{ n }} text size</span>
+            <select name="properties[Line {{ n }} size]" form="{{ form_id }}" disabled data-engraving-size="{{ n }}">
+              {%- for size in sizes -%}
+                <option value="{{ size }}" {% if size == 'Medium' %}selected{% endif %}>{{ size }}</option>
+              {%- endfor -%}
+            </select>
+          </label>
+        </div>
+      </div>
+    {%- endfor -%}
 
-    <div class="engraving__field">
-      <label for="EngravingLine2-{{ uid }}">Line 2 <span class="engraving__optional">(optional)</span></label>
-      <input
-        id="EngravingLine2-{{ uid }}"
-        type="text"
-        name="properties[Line 2]"
-        form="{{ form_id }}"
-        maxlength="{{ max_chars }}"
-        placeholder="e.g. Brisbane Rovers 2026"
-        autocomplete="off"
-        data-engraving-input="2"
-      >
-      <span class="engraving__count" data-engraving-count="2">0/{{ max_chars }}</span>
-    </div>
-
-    <fieldset class="engraving__fonts">
+    <fieldset class="engraving__choices">
       <legend>Font</legend>
       {%- for font in fonts -%}
         {%- assign name = font | strip -%}
-        <label class="engraving__font" style="font-family: '{{ name }}', serif;">
+        <label class="engraving__choice" style="font-family: '{{ name }}', serif;">
           <input
             type="radio"
             name="properties[Font]"
@@ -119,10 +132,50 @@
       {%- endfor -%}
     </fieldset>
 
+    {%- if show_logo -%}
+      <div class="engraving__logo">
+        <label class="engraving__label" for="EngravingLogo-{{ uid }}">
+          Logo <span class="engraving__optional">(optional)</span>
+        </label>
+        {%- comment -%} The script adds the form attribute once a valid file is chosen, so an empty input isn't sent. {%- endcomment -%}
+        <input
+          id="EngravingLogo-{{ uid }}"
+          class="engraving__file"
+          type="file"
+          name="properties[Logo]"
+          accept="image/png,image/jpeg,image/svg+xml,image/webp"
+          data-engraving-logo-input
+        >
+        <p class="engraving__hint">PNG with a transparent background or SVG works best. Up to 10 MB.</p>
+        <p class="engraving__logo-message" role="status" hidden data-engraving-logo-message></p>
+
+        <div class="engraving__logo-options" hidden data-engraving-logo-options>
+          <fieldset class="engraving__choices">
+            <legend>Logo position</legend>
+            {%- for position in logo_positions -%}
+              <label class="engraving__choice">
+                <input
+                  type="radio"
+                  name="properties[Logo position]"
+                  form="{{ form_id }}"
+                  value="{{ position }}"
+                  {% if forloop.first %}checked{% endif %}
+                  disabled
+                  data-engraving-logo-position
+                >
+                <span>{{ position }}</span>
+              </label>
+            {%- endfor -%}
+          </fieldset>
+          <button type="button" class="engraving__remove" data-engraving-logo-remove>Remove logo</button>
+        </div>
+      </div>
+    {%- endif -%}
+
     <p class="engraving__note">The preview is a guide. We send an artwork proof before production.</p>
   </div>
 
-  <p class="engraving__status" aria-live="polite" data-engraving-status></p>
+  <p class="engraving__sr-only" aria-live="polite" data-engraving-status></p>
 </div>
 
 <script src="{{ 'engraving-preview.js' | asset_url }}" defer></script>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Engraving Preview Demo</title>
-  <meta name="description" content="Live engraving preview for a Shopify product page: type a name and see it on the trophy.">
+  <meta name="description" content="Live engraving preview for a Shopify product page: type a name, choose sizes, add a logo and see it on the trophy.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat&family=Great+Vibes&display=swap">
@@ -21,7 +21,7 @@
     h1 { margin: 0 0 4px; font-size: clamp(1.5rem, 4vw, 2rem); }
     .lead { margin: 0 0 8px; opacity: 0.75; }
     .price { margin: 0; font-weight: 600; }
-    button {
+    .add {
       min-height: 48px;
       padding: 0 24px;
       border: 0;
@@ -30,6 +30,18 @@
       color: #fff;
       font: inherit;
       font-weight: 600;
+      cursor: pointer;
+    }
+    .sample {
+      justify-self: start;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px dashed rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      background: none;
+      color: inherit;
+      font: inherit;
+      font-size: 0.85em;
       cursor: pointer;
     }
     .cart { margin-top: 16px; padding: 16px; border: 1px dashed rgba(0, 0, 0, 0.25); border-radius: 8px; }
@@ -41,7 +53,7 @@
 <body>
   <main>
     <h1>Reclaimed Timber Trophy</h1>
-    <p class="lead">Demo of the engraving preview. Type below and watch the trophy update.</p>
+    <p class="lead">Demo of the engraving preview. Type below, pick text sizes, add a logo and watch the trophy update.</p>
     <p class="price">$89.00 AUD</p>
 
     <!-- Same markup the Liquid snippet renders on a Shopify product page. -->
@@ -51,6 +63,7 @@
       <div class="engraving__stage">
         <img class="engraving__image" src="trophy.jpg" width="928" height="1152" alt="Reclaimed timber trophy with a blank maple panel for engraving">
         <div class="engraving__area" aria-hidden="true">
+          <img class="engraving__logo-preview" alt="" width="200" height="200" hidden data-engraving-logo-preview>
           <span class="engraving__line" data-engraving-line="1"></span>
           <span class="engraving__line" data-engraving-line="2"></span>
         </div>
@@ -60,36 +73,83 @@
         <p class="engraving__title">Personalise your engraving</p>
 
         <div class="engraving__field">
-          <label for="EngravingLine1-demo">Line 1</label>
-          <input id="EngravingLine1-demo" type="text" name="properties[Line 1]" form="product-form-demo" maxlength="26" placeholder="e.g. Player of the Year" autocomplete="off" value="Player of the Year" data-engraving-input="1">
-          <span class="engraving__count" data-engraving-count="1">0/26</span>
+          <div class="engraving__label-row">
+            <label for="EngravingLine1-demo">Line 1</label>
+            <span class="engraving__count" data-engraving-count="1">0/26</span>
+          </div>
+          <div class="engraving__input-row">
+            <input id="EngravingLine1-demo" type="text" name="properties[Line 1]" form="product-form-demo" maxlength="26" placeholder="e.g. Player of the Year" autocomplete="off" value="Player of the Year" data-engraving-input="1">
+            <label class="engraving__size">
+              <span class="engraving__sr-only">Line 1 text size</span>
+              <select name="properties[Line 1 size]" form="product-form-demo" disabled data-engraving-size="1">
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large" selected>Large</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         <div class="engraving__field">
-          <label for="EngravingLine2-demo">Line 2 <span class="engraving__optional">(optional)</span></label>
-          <input id="EngravingLine2-demo" type="text" name="properties[Line 2]" form="product-form-demo" maxlength="26" placeholder="e.g. Brisbane Rovers 2026" autocomplete="off" value="Brisbane Rovers 2026" data-engraving-input="2">
-          <span class="engraving__count" data-engraving-count="2">0/26</span>
+          <div class="engraving__label-row">
+            <label for="EngravingLine2-demo">Line 2 <span class="engraving__optional">(optional)</span></label>
+            <span class="engraving__count" data-engraving-count="2">0/26</span>
+          </div>
+          <div class="engraving__input-row">
+            <input id="EngravingLine2-demo" type="text" name="properties[Line 2]" form="product-form-demo" maxlength="26" placeholder="e.g. Brisbane Rovers 2026" autocomplete="off" value="Brisbane Rovers 2026" data-engraving-input="2">
+            <label class="engraving__size">
+              <span class="engraving__sr-only">Line 2 text size</span>
+              <select name="properties[Line 2 size]" form="product-form-demo" disabled data-engraving-size="2">
+                <option value="Small" selected>Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+              </select>
+            </label>
+          </div>
         </div>
 
-        <fieldset class="engraving__fonts">
+        <fieldset class="engraving__choices">
           <legend>Font</legend>
-          <label class="engraving__font" style="font-family: 'Playfair Display', serif;">
+          <label class="engraving__choice" style="font-family: 'Playfair Display', serif;">
             <input type="radio" name="properties[Font]" form="product-form-demo" value="Playfair Display" checked data-engraving-font>
             <span>Playfair Display</span>
           </label>
-          <label class="engraving__font" style="font-family: 'Montserrat', serif;">
+          <label class="engraving__choice" style="font-family: 'Montserrat', serif;">
             <input type="radio" name="properties[Font]" form="product-form-demo" value="Montserrat" data-engraving-font>
             <span>Montserrat</span>
           </label>
-          <label class="engraving__font" style="font-family: 'Great Vibes', serif;">
+          <label class="engraving__choice" style="font-family: 'Great Vibes', serif;">
             <input type="radio" name="properties[Font]" form="product-form-demo" value="Great Vibes" data-engraving-font>
             <span>Great Vibes</span>
           </label>
         </fieldset>
 
+        <div class="engraving__logo">
+          <label class="engraving__label" for="EngravingLogo-demo">Logo <span class="engraving__optional">(optional)</span></label>
+          <input id="EngravingLogo-demo" class="engraving__file" type="file" name="properties[Logo]" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-engraving-logo-input>
+          <p class="engraving__hint">PNG with a transparent background or SVG works best. Up to 10 MB.</p>
+          <button type="button" class="sample" data-demo-sample-logo>No logo handy? Try a sample logo</button>
+          <p class="engraving__logo-message" role="status" hidden data-engraving-logo-message></p>
+
+          <div class="engraving__logo-options" hidden data-engraving-logo-options>
+            <fieldset class="engraving__choices">
+              <legend>Logo position</legend>
+              <label class="engraving__choice">
+                <input type="radio" name="properties[Logo position]" form="product-form-demo" value="Top" checked disabled data-engraving-logo-position>
+                <span>Top</span>
+              </label>
+              <label class="engraving__choice">
+                <input type="radio" name="properties[Logo position]" form="product-form-demo" value="Bottom" disabled data-engraving-logo-position>
+                <span>Bottom</span>
+              </label>
+            </fieldset>
+            <button type="button" class="engraving__remove" data-engraving-logo-remove>Remove logo</button>
+          </div>
+        </div>
+
         <p class="engraving__note">The preview is a guide. We send an artwork proof before production.</p>
 
-        <button type="submit" form="product-form-demo">Add to cart</button>
+        <button type="submit" class="add" form="product-form-demo">Add to cart</button>
 
         <div class="cart">
           <h2>What Shopify would save on the order</h2>
@@ -97,10 +157,10 @@
         </div>
       </div>
 
-      <p class="engraving__status" aria-live="polite" data-engraving-status></p>
+      <p class="engraving__sr-only" aria-live="polite" data-engraving-status></p>
     </div>
 
-    <footer>Built by Madiha F. Trophy photo generated for this demo.</footer>
+    <footer>Built by Madiha F. Trophy photo generated for this demo; the crest is a made-up sample.</footer>
   </main>
 
   <script src="../assets/engraving-preview.js"></script>
@@ -108,11 +168,23 @@
     // Demo only: show the line item properties instead of adding to a real cart.
     document.getElementById('product-form-demo').addEventListener('submit', (event) => {
       event.preventDefault();
-      const data = new FormData(event.target);
-      const lines = [...data.entries()]
-        .filter(([key, value]) => value.trim())
-        .map(([key, value]) => `${key.replace(/^properties\[(.*)\]$/, '$1')}: ${value}`);
+      const lines = [...new FormData(event.target).entries()]
+        .filter(([, value]) => (value instanceof File ? value.name : value.trim()))
+        .map(([key, value]) => {
+          const name = key.replace(/^properties\[(.*)\]$/, '$1');
+          return `${name}: ${value instanceof File ? `${value.name} (uploaded file)` : value}`;
+        });
       document.querySelector('[data-demo-cart]').textContent = lines.join('\n') || 'No engraving entered.';
+    });
+
+    // Demo only: load the sample crest into the logo field as if the visitor picked it.
+    document.querySelector('[data-demo-sample-logo]').addEventListener('click', async () => {
+      const input = document.querySelector('[data-engraving-logo-input]');
+      const blob = await (await fetch('sample-logo.svg')).blob();
+      const transfer = new DataTransfer();
+      transfer.items.add(new File([blob], 'sample-logo.svg', { type: 'image/svg+xml' }));
+      input.files = transfer.files;
+      input.dispatchEvent(new Event('change'));
     });
   </script>
 </body>

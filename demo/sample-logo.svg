@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" role="img" aria-label="Sample club crest">
+  <path d="M100 8 182 36v62c0 54-36 94-82 114C54 192 18 152 18 98V36z" fill="none" stroke="#111" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M100 30 162 51v47c0 42-27 74-62 90-35-16-62-48-62-90V51z" fill="#111"/>
+  <path d="m100 62 11 23 25 3-18 17 5 25-23-12-23 12 5-25-18-17 25-3z" fill="#fff"/>
+  <text x="100" y="166" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#fff" text-anchor="middle">BR</text>
+</svg>

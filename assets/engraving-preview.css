@@ -9,6 +9,13 @@
   margin: 1.5rem 0;
 }
 
+/* Don't rely on the theme's reset: widths include padding and borders. */
+.engraving *,
+.engraving *::before,
+.engraving *::after {
+  box-sizing: border-box;
+}
+
 .engraving__stage {
   position: relative;
   border-radius: 8px;
@@ -51,8 +58,22 @@
   white-space: nowrap;
 }
 
-.engraving__line[hidden] {
+.engraving__line[hidden],
+.engraving__logo-preview[hidden] {
   display: none;
+}
+
+/* Grey, warm and high contrast so the logo reads as burned in. White areas stay invisible under multiply. */
+.engraving__logo-preview {
+  display: block;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(1) sepia(0.35) contrast(1.3);
+}
+
+.engraving__area--logo-bottom .engraving__logo-preview {
+  order: 1;
 }
 
 .engraving__fields {
@@ -67,44 +88,80 @@
 
 .engraving__field {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.35rem 0.75rem;
-  align-items: end;
+  gap: 0.35rem;
 }
 
-.engraving__field label {
-  grid-column: 1 / -1;
+.engraving__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.engraving__label-row label,
+.engraving__label,
+.engraving__choices legend {
   font-size: 0.9em;
 }
 
-.engraving__field input {
+.engraving__input-row {
+  display: grid;
+  /* minmax(0, …) lets the input shrink below its default width on narrow screens. */
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+}
+
+.engraving__field input,
+.engraving__size select {
   width: 100%;
   min-height: 44px;
   padding: 0.6rem 0.75rem;
   border: 1px solid var(--engraving-border);
   border-radius: 6px;
+  background-color: #fff;
+  color: inherit;
   font: inherit;
 }
 
+/* The label stretches to the input's height; the select fills it so both line up. */
+.engraving__size {
+  display: flex;
+}
+
+.engraving__size select {
+  width: auto;
+  height: 100%;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.engraving__size select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .engraving__field input:focus-visible,
-.engraving__font input:focus-visible + span {
+.engraving__size select:focus-visible,
+.engraving__file:focus-visible,
+.engraving__remove:focus-visible,
+.engraving__choice input:focus-visible + span {
   outline: 2px solid var(--engraving-accent);
   outline-offset: 2px;
 }
 
 .engraving__count,
 .engraving__optional,
-.engraving__note {
+.engraving__note,
+.engraving__hint {
   font-size: 0.8em;
   opacity: 0.7;
 }
 
 .engraving__count {
-  align-self: center;
   font-variant-numeric: tabular-nums;
 }
 
-.engraving__fonts {
+.engraving__choices {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -113,22 +170,21 @@
   border: 0;
 }
 
-.engraving__fonts legend {
+.engraving__choices legend {
   margin-bottom: 0.5rem;
-  font-size: 0.9em;
 }
 
-.engraving__font {
+.engraving__choice {
   position: relative;
   cursor: pointer;
 }
 
-.engraving__font input {
+.engraving__choice input {
   position: absolute;
   opacity: 0;
 }
 
-.engraving__font span {
+.engraving__choice span {
   display: inline-block;
   min-height: 44px;
   padding: 0.55rem 0.9rem;
@@ -137,16 +193,89 @@
   font-size: 1.05em;
 }
 
-.engraving__font input:checked + span {
+.engraving__choice input:checked + span {
   border-color: var(--engraving-accent);
   box-shadow: inset 0 0 0 1px var(--engraving-accent);
+}
+
+.engraving__logo {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.engraving__file {
+  font: inherit;
+  font-size: 0.9em;
+}
+
+.engraving__file::file-selector-button {
+  min-height: 44px;
+  margin-right: 0.75rem;
+  padding: 0 1rem;
+  border: 1px solid var(--engraving-border);
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.engraving__hint {
+  margin: 0;
+}
+
+.engraving__logo-message {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.engraving__logo-message[data-tone='ok'] {
+  background: #eef6ee;
+  color: #1f5130;
+}
+
+.engraving__logo-message[data-tone='warning'] {
+  background: #fff6e0;
+  color: #6b4500;
+}
+
+.engraving__logo-message[data-tone='error'] {
+  background: #fdeceb;
+  color: #8a1f17;
+}
+
+.engraving__logo-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.engraving__logo-options[hidden] {
+  display: none;
+}
+
+.engraving__remove {
+  min-height: 44px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9em;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .engraving__note {
   margin: 0;
 }
 
-.engraving__status {
+.engraving__sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
