@@ -42,7 +42,7 @@ Built for personalised products like trophies, plaques, cutting boards and gifts
 
    | Metafield | Type | Default | Use |
    |---|---|---|---|
-   | `engraving.area` | Single line text | `22,56,56,16` | Engraving position as `left,top,width,height` in % of the photo |
+   | `engraving.area` | Single line text | `34.1,50.2,32.1,21.1` | Engraving position as `left,top,width,height` in % of the photo |
    | `engraving.max_chars` | Integer | `26` | Characters per line |
    | `engraving.fonts` | Single line text | `Playfair Display,Montserrat,Great Vibes` | Google Fonts to offer |
    | `engraving.required` | True or false | `false` | Make line 1 required before adding to cart |

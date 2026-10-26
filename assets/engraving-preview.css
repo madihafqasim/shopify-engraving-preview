@@ -25,10 +25,10 @@
 /* Default area; JavaScript replaces it with the product's own values. */
 .engraving__area {
   position: absolute;
-  left: 22%;
-  top: 56%;
-  width: 56%;
-  height: 16%;
+  left: 34.1%;
+  top: 50.2%;
+  width: 32.1%;
+  height: 21.1%;
   display: flex;
   flex-direction: column;
   align-items: center;

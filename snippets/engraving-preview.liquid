@@ -17,7 +17,7 @@
   Optional product metafields (namespace "engraving"):
     engraving.area       Single line text  Where the text sits on the photo, as
                                            "left,top,width,height" in % of the
-                                           image. Default "22,56,56,16".
+                                           image. Default "34.1,50.2,32.1,21.1".
     engraving.max_chars  Integer           Characters per line. Default 26.
     engraving.fonts      Single line text  Comma-separated Google Fonts.
                                            Default "Playfair Display,Montserrat,Great Vibes".
@@ -25,7 +25,7 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign area = product.metafields.engraving.area.value | default: '22,56,56,16'
+  assign area = product.metafields.engraving.area.value | default: '34.1,50.2,32.1,21.1'
   assign max_chars = product.metafields.engraving.max_chars.value | default: 26
   assign font_list = product.metafields.engraving.fonts.value | default: 'Playfair Display,Montserrat,Great Vibes'
   assign fonts = font_list | split: ','
